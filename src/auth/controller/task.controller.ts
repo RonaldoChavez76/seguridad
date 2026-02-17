@@ -1,27 +1,34 @@
-import { Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import { TaskService } from '../service/task.service'
 
 @Controller('api/task')
 export class TaskController {
   constructor(private readonly taskSvc: TaskService) {}
-  @Get('1')
-  public fetchTasks(): string[] {
+
+  @Get()
+  public fetchTasks(): any[] {
     return this.taskSvc.getTasks();
   }
 
-  public getTaskById(id: number): any {
-    return this.taskSvc.getTaskById(id);
+  @Get(":id") 
+  public getTaskById(@Param("id", ParseIntPipe) id: number): any {
+    var task = this.taskSvc.getTaskById(id);
+    if(task) return task;
+    else throw new HttpException('Task not found', HttpStatus.NOT_FOUND);
   }
-  @Post()
-  public insertTask(task: any): any {
+
+ @Post()
+  public insertTask(@Body() task: any): any {
     return this.taskSvc.insertTask(task);
   }
-  @Put()
-  public updateTask(id: number, task: any): any {
+
+  @Put(':id') 
+  public updateTask(@Param("id", ParseIntPipe) id: number, @Body() task: any): any {
     return this.taskSvc.updateTask(id, task);
   }
-  @Delete()
-  public deleteTask(id: number): any {
+
+  @Delete(':id') 
+  public deleteTask(@Param("id", ParseIntPipe) id: number): any {
     return this.taskSvc.deleteTask(id);
   }
 }
