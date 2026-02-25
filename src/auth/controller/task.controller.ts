@@ -1,11 +1,15 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import { TaskService } from '../service/task.service'
+import { UpdateTaskDto } from '../dto/update-task.dto';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('task')
 @Controller('api/task')
 export class TaskController {
   constructor(private readonly taskSvc: TaskService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Obtener todas las tareas disponibles' })
   public async fetchTasks(): Promise<any[]> {
     return await this.taskSvc.getTasks();
   }
@@ -27,12 +31,17 @@ export class TaskController {
   }
 
   @Put(':id') 
-  public async updateTask(@Param("id", ParseIntPipe) id: number, @Body() task: any): Promise<any> {
-    return await this.taskSvc.updateTask(id, task);
+  public async updateTask(@Param("id", ParseIntPipe) id: number, @Body() UpdateTaskDto: UpdateTaskDto): Promise<any> {
+    return await this.taskSvc.updateTask(id, UpdateTaskDto);
   }
 
   @Delete(':id') 
-  public async deleteTask(@Param("id", ParseIntPipe) id: number): Promise<any> {
-    return await this.taskSvc.deleteTask(id);
+  @HttpCode(HttpStatus.OK)
+  public async deleteTask(@Param("id", ParseIntPipe) id: number): Promise<boolean> {
+    const result = await this.taskSvc.deleteTask(id);
+    if (!result) 
+        throw new HttpException('Task not found', HttpStatus.NOT_FOUND);
+
+    return result;
   }
 }
