@@ -6,29 +6,33 @@ export class TaskController {
   constructor(private readonly taskSvc: TaskService) {}
 
   @Get()
-  public fetchTasks(): any[] {
-    return this.taskSvc.getTasks();
+  public async fetchTasks(): Promise<any[]> {
+    return await this.taskSvc.getTasks();
   }
 
-  @Get(":id") 
-  public getTaskById(@Param("id", ParseIntPipe) id: number): any {
-    var task = this.taskSvc.getTaskById(id);
-    if(task) return task;
-    else throw new HttpException('Task not found', HttpStatus.NOT_FOUND);
+  @Get(":id")
+  public async getTaskById(@Param("id", ParseIntPipe) id: number): Promise<any> {
+    const task = await this.taskSvc.getTaskById(id);
+
+    if (task) {
+      return task;
+    } else {
+      throw new HttpException('Task not found', HttpStatus.NOT_FOUND);
+    }
   }
 
  @Post()
-  public insertTask(@Body() task: any): any {
-    return this.taskSvc.insertTask(task);
+  public async insertTask(@Body() task: any): Promise<any> {
+    return await this.taskSvc.insertTask(task);
   }
 
   @Put(':id') 
-  public updateTask(@Param("id", ParseIntPipe) id: number, @Body() task: any): any {
-    return this.taskSvc.updateTask(id, task);
+  public async updateTask(@Param("id", ParseIntPipe) id: number, @Body() task: any): Promise<any> {
+    return await this.taskSvc.updateTask(id, task);
   }
 
   @Delete(':id') 
-  public deleteTask(@Param("id", ParseIntPipe) id: number): any {
-    return this.taskSvc.deleteTask(id);
+  public async deleteTask(@Param("id", ParseIntPipe) id: number): Promise<any> {
+    return await this.taskSvc.deleteTask(id);
   }
 }

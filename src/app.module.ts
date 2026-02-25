@@ -3,10 +3,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TaskController } from './auth/controller/task.controller';
 import { TaskService } from './auth/service/task.service';
+import { databaseProvider } from './database/database.provide';
 
 @Module({
   imports: [],
   controllers: [AppController, TaskController],
-  providers: [AppService, TaskService],
+  providers: [AppService, TaskService, databaseProvider[0]],
 })
 export class AppModule {}
