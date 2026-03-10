@@ -14,13 +14,31 @@ export class UsersService {
     ){}
 
     public async getUsers(): Promise<User[]> {
-        return await this.prisma.user.findMany();
+        return await this.prisma.user.findMany({
+            orderBy:[{name : "asc"}],
+            select: {
+                id: true,
+                name: true,
+                lastname: true,
+                username: true,
+                password: true,
+                created_at: true
+            }
+        });
     }
 
     public async getUserById(id: number): Promise<User> {
         try {
             return await this.prisma.user.findUniqueOrThrow({
-                where: { id }
+                where: { id },
+                select: {
+                id: true,
+                name: true,
+                lastname: true,
+                username: true,
+                password: false,
+                created_at: true
+            }
             });
         } catch (error) {
             throw new Error('Usuario no encontrado');
@@ -29,14 +47,30 @@ export class UsersService {
 
     public async insertUser(user: CreateUserDto): Promise<User> {
         return await this.prisma.user.create({
-            data: user
+            data: user,
+            select: {
+                id: true,
+                name: true,
+                lastname: true,
+                username: true,
+                password: false,
+                created_at: true
+            }
         });
     }
 
     public async updateUser(id: number, userUpdated: UpdateUserDto): Promise<User> {
         return await this.prisma.user.update({
             where: { id },
-            data: userUpdated
+            data: userUpdated,
+            select: {
+                id: true,
+                name: true,
+                lastname: true,
+                username: true,
+                password: false,
+                created_at: true
+            }
         });
     }
 

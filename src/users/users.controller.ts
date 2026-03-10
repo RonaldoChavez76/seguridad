@@ -3,6 +3,7 @@ import { UsersService } from './users.service';
 import { ApiOperation } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entity/user.entity';
 
 @Controller('api/users')
 export class UsersController {
@@ -42,8 +43,10 @@ export class UsersController {
   }
 
   @Put(':id')
-  public async updateUser(@Param("id", ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto): Promise<any> {
+  public async updateUser(@Param("id", ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto): Promise<User> {
     try {
+      //const encryptedPassword = await this.utilService.hashPassword(user.password);
+      //user.password = encryptedPassword;
       return await this.usersService.updateUser(id, updateUserDto);
     } catch (error) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
