@@ -1,13 +1,14 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiOperation } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entity/user.entity';
+import { UtilService } from 'src/common/services/util.service';
 
 @Controller('api/users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService, private readonly utilService: UtilService) {}
 
   @Get()
   @ApiOperation({ summary: 'Obtener todos los usuarios disponibles' })
@@ -36,17 +37,19 @@ export class UsersController {
   @Post()
   public async insertUser(@Body() user: CreateUserDto): Promise<any> {
     try {
+      const encryptedPassword = await this.utilService.hashPassword(user.password);
+      user.password = encryptedPassword;
       return await this.usersService.insertUser(user);
     } catch (error) {
       throw new HttpException('Error creating user', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  @Put(':id')
+  @Patch(':id')
   public async updateUser(@Param("id", ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto): Promise<User> {
     try {
-      //const encryptedPassword = await this.utilService.hashPassword(user.password);
-      //user.password = encryptedPassword;
+      const encryptedPassword = await this.utilService.hashPassword(updateUserDto.password);
+      updateUserDto.password = encryptedPassword;
       return await this.usersService.updateUser(id, updateUserDto);
     } catch (error) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);

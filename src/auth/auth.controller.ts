@@ -2,29 +2,27 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/commo
 import { AuthService } from './auth.service';
 import { ApiOperation } from '@nestjs/swagger';
 import { AuthDto } from './dto/auth.dto';
+import { UtilService } from 'src/common/services/util.service';
 
 @Controller('api/auth')
 export class AuthController {
-  constructor(private readonly jwtSvc: AuthService) {}
+  constructor(private readonly jwtSvc: AuthService, private readonly utilSvc: UtilService) {}
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Verifica las credenciales y genera un JWT' }) 
-  public logIn(@Body() auth: AuthDto): string {
+  public async logIn(@Body() auth: AuthDto): Promise<string> {
     const { username, password } = auth;
 
-    const jwt = this.jwtSvc.signAsync(auth, {secret: process.env.JWT_SECRET});
+    // TODO: Verificar usuario y contraseña en la base de datos
 
-    // Verificar usuario y contraseña
+    // TODO: Obtener la informacion a enviar payload
 
-    // Obtener la informacion a enviar payload del token
+    //TODO: Generar token de aaceso por 60s
 
-    // Generar el token JWT por 60 segundos
-
-    // Generar refresh token JWT por 7 días
-
-
-    return this.jwtSvc.logIn();
+    //TODO: Generar token de actualización por 7 días
+   
+    return jwt;
   }
 
   @Get('me')
