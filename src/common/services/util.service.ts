@@ -16,8 +16,8 @@ export class UtilService {
         return await bcrypt.compare(password, encryptedPassword);
     }
 
-    public async generateJWT(payload: any):Promise<string> {
-            return await this.jwtSvc.signAsync(payload, { secret: process.env.JWT_SECRET });
+    public async generateJWT(payload: any, expiresIn: any = '60s'):Promise<string> {
+            return await this.jwtSvc.signAsync(payload, { secret: process.env.JWT_SECRET, expiresIn: expiresIn });
     }
 
     public async getPayload(token: string):Promise<any> {

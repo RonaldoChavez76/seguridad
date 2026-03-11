@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from 'src/common/prisma/prisma.service';
+import { User } from 'src/users/entity/user.entity';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly jwtService : JwtService) {}
+  constructor(private readonly prisma : PrismaService) {}
 
+  public async getUserByUsername(username: string) : Promise<User | null>{
+    return await this.prisma.user.findFirst({ 
+      where: { username } 
+    });
+  }
 
   public logIn(): string {
     return 'Sesión exitosa';
-  }
-
-  public async signAsync(payload: any, options: any): Promise<string> {
-    return this.jwtService.signAsync(payload, options);
   }
 
 }
