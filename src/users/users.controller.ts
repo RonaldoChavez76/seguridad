@@ -1,24 +1,27 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseIntPipe, Patch, Post, Put, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiOperation } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entity/user.entity';
 import { UtilService } from 'src/common/services/util.service';
+import { AuthGuard } from 'src/common/guards/auth.guard';
 
 @Controller('api/users')
+@UseGuards(AuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService, private readonly utilService: UtilService) {}
 
-  @Get()
-  @ApiOperation({ summary: 'Obtener todos los usuarios disponibles' })
-  public async fetchUsers(): Promise<any[]> {
-    try {
-      return await this.usersService.getUsers();
-    } catch (error) {
-      throw new HttpException('Error fetching users', HttpStatus.INTERNAL_SERVER_ERROR);
+ @Get()
+@ApiOperation({ summary: 'Obtener todos los usuarios disponibles' })
+public async fetchUsers(@Req() request: any): Promise<any[]> {
+    const { id } = request['users'];
+    if (!id || typeof id !== 'number') {
+        throw new UnauthorizedException;
     }
-  }
+    
+    return await this.usersService.getUsers(id);
+}
 
   @Get(":id")
   public async getUserById(@Param("id", ParseIntPipe) id: number): Promise<any> {

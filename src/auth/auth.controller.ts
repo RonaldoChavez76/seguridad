@@ -29,7 +29,7 @@ export class AuthController {
       //FIXME: Generar token de actualización por 7 días
       const refreshToken = await this.utilSvc.generateJWT(payload, '7d');
 
-      return { access_token: jwt, refresh_token: refreshToken };
+      return await { access_token: jwt, refresh_token: refreshToken };
     } else {
       throw new UnauthorizedException('Contraseña incorrecta');
     }

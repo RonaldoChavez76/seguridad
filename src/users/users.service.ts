@@ -13,15 +13,20 @@ export class UsersService {
         private prisma : PrismaService
     ){}
 
-    public async getUsers(): Promise<User[]> {
+    public async getUsers(id:number): Promise<User[]> {
         return await this.prisma.user.findMany({
             orderBy:[{name : "asc"}],
+            where: {
+                NOT: {
+                    id: id
+                }
+            },
             select: {
                 id: true,
                 name: true,
                 lastname: true,
                 username: true,
-                password: true,
+                password: false,
                 created_at: true
             }
         });
