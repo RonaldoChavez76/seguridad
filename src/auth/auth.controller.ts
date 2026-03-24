@@ -1,8 +1,9 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiOperation } from '@nestjs/swagger';
 import { AuthDto } from './dto/auth.dto';
 import { UtilService } from 'src/common/services/util.service';
+import { AuthGuard } from 'src/common/guards/auth.guard';
 
 @Controller('api/auth')
 export class AuthController {
@@ -36,9 +37,11 @@ export class AuthController {
   }
 
   @Get('me')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Extrae el id del usuario desde el token y busca la información del usuario' })
-  public async getProfile(): Promise<string> {
-    return 'Perfil del usuario';
+  public async getProfile(@Req() req: any): Promise<string> {
+    const user = req['users'];
+    return user;
   }
 
 

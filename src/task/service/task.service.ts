@@ -13,14 +13,18 @@ export class TaskService {
     private prisma : PrismaService
   ) {}
 
-  public async getTasks(): Promise<Task[]> {
-  return await this.prisma.task.findMany();
+  public async getTasks(id: number): Promise<Task[]> {
+  return await this.prisma.task.findMany({
+    where: {
+      user_id: id
+    }
+  })
 }
 
-public async getTaskById(id: number): Promise<Task | null> {
+public async getTaskById(id: number, userId: number): Promise<Task | null> {
   try {
     return await this.prisma.task.findUniqueOrThrow({
-      where: { id }
+      where: { id, user_id: userId }
     });
   } catch (error) {
     return null;
@@ -33,16 +37,16 @@ public async insertTask(task: CreateTaskDto): Promise<Task> {
   });
 }
 
-public async updateTask(id: number, taskUpdated: UpdateTaskDto): Promise<Task> {
+public async updateTask(id: number, userId: number, taskUpdated: UpdateTaskDto): Promise<Task> {
   return await this.prisma.task.update({
-    where: { id },
+    where: { id, user_id: userId },
     data: taskUpdated
   });
 }
 
-public async deleteTask(id: number): Promise<boolean> {
+public async deleteTask(id: number, userId: number): Promise<boolean> {
   await this.prisma.task.delete({
-    where: { id }
+    where: { id, user_id: userId }
   });
   return true;
 }
