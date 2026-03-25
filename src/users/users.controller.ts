@@ -40,7 +40,7 @@ public async fetchUsers(@Req() request: any): Promise<any[]> {
   @Post()
   public async insertUser(@Body() user: CreateUserDto): Promise<any> {
     try {
-      const encryptedPassword = await this.utilService.hashPassword(user.password);
+      const encryptedPassword = await this.utilService.hash(user.password);
       user.password = encryptedPassword;
       return await this.usersService.insertUser(user);
     } catch (error) {
@@ -51,7 +51,7 @@ public async fetchUsers(@Req() request: any): Promise<any[]> {
   @Patch(':id')
   public async updateUser(@Param("id", ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto): Promise<User> {
     try {
-      const encryptedPassword = await this.utilService.hashPassword(updateUserDto.password);
+      const encryptedPassword = await this.utilService.hash(updateUserDto.password);
       updateUserDto.password = encryptedPassword;
       return await this.usersService.updateUser(id, updateUserDto);
     } catch (error) {

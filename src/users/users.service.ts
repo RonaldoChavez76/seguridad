@@ -9,7 +9,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UsersService {
 
     constructor(
-        @Inject('DATABASE_CONNECTION') private db : Client,
         private prisma : PrismaService
     ){}
 

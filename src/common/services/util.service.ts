@@ -7,9 +7,9 @@ export class UtilService {
 
     constructor(private readonly jwtSvc: JwtService) {}
 
-    public async hashPassword(password: string): Promise<string> {
+    public async hash(text: string): Promise<string> {
         const saltRounds = 10;
-        return await bcrypt.hash(password, saltRounds);
+        return await bcrypt.hash(text, saltRounds);
     }
 
     public async checkPassword(password: string, encryptedPassword: string): Promise<boolean> {
