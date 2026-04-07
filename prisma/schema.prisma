@@ -22,6 +22,7 @@ model User {
   created_at DateTime @default(now())
 
   tasks      Task[]   
+  logs       Logs[]
 }
 
 model Task {
@@ -33,4 +34,18 @@ model Task {
 
   user_id     Int
   user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+
+model Logs {
+  id Int @id @default(autoincrement())
+  statusCode Int 
+  timestamp DateTime
+  path String @db.Text
+  error String @db.Text
+  errorCode String @db.Text
+  session_id Int?
+
+  user User? @relation(fields: [session_id], references: [id])
+
 }
